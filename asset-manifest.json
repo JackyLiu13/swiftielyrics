@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/swiftielyrics/static/css/main.32ef94a1.css",
+    "main.js": "/swiftielyrics/static/js/main.4fa92e91.js",
+    "static/media/ticketart.png": "/swiftielyrics/static/media/ticketart.0d4bdad271db080f2249.png",
+    "index.html": "/swiftielyrics/index.html",
+    "main.32ef94a1.css.map": "/swiftielyrics/static/css/main.32ef94a1.css.map",
+    "main.4fa92e91.js.map": "/swiftielyrics/static/js/main.4fa92e91.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.32ef94a1.css",
+    "static/js/main.4fa92e91.js"
+  ]
+}
