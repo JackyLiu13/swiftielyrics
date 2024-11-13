@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import lyrics from '../data/lyrics.json';
+import { saveScore } from '../utils/scores';
+import TimerBar from '../components/TimerBar';
 
 const Game = () => {
+  const navigate = useNavigate();
+  const [timeLeft, setTimeLeft] = useState(60); // 60 seconds game
+  const [maxTime, setMaxTime] = useState(60);
+  const [gameOver, setGameOver] = useState(false);
   const [currentLyric, setCurrentLyric] = useState(null);
   const [userGuess, setUserGuess] = useState('');
   const [score, setScore] = useState(0);
@@ -10,6 +17,23 @@ const Game = () => {
   const [hintLyrics, setHintLyrics] = useState([]);
   const [isCorrect, setIsCorrect] = useState(false);
   const [difficulty, setDifficulty] = useState('medium');
+
+  // Timer effect
+  useEffect(() => {
+    if (timeLeft > 0 && !gameOver) {
+      const timer = setInterval(() => {
+        setTimeLeft(prev => prev - 1);
+      }, 1000);
+      return () => clearInterval(timer);
+    } else if (timeLeft === 0 && !gameOver) {
+      endGame();
+    }
+  }, [timeLeft, gameOver]);
+
+  const endGame = () => {
+    setGameOver(true);
+    saveScore({ score, date: new Date().toISOString() });
+  };
 
   useEffect(() => {
     newRound();
@@ -48,6 +72,7 @@ const Game = () => {
       setScore(prev => prev + (10 * (streak + 1) * getDifficultyMultiplier()));
       setStreak(prev => prev + 1);
       setIsCorrect(true);
+      setTimeLeft(prev => Math.min(prev + 20, maxTime));
       setTimeout(newRound, 2000);
     } else {
       setStreak(0);
@@ -118,6 +143,35 @@ const Game = () => {
     }
   };
 
+  if (gameOver) {
+    return (
+      <div className="min-h-screen bg-pink-50 flex items-center justify-center p-4">
+        <div className="bg-white border-4 border-black shadow-brutal p-8 max-w-md w-full space-y-6 text-center">
+          <h2 className="text-4xl font-bold text-gray-800 border-b-4 border-black pb-4">
+            Game Over!
+          </h2>
+          <div className="text-6xl font-bold text-pink-500 my-8">
+            {score}
+          </div>
+          <div className="space-y-4">
+            <button
+              onClick={() => window.location.reload()}
+              className="w-full py-4 bg-pink-400 border-4 border-black text-xl font-bold hover:translate-x-1 hover:translate-y-1 transition-transform shadow-brutal"
+            >
+              Play Again
+            </button>
+            <button
+              onClick={() => navigate('/')}
+              className="w-full py-4 bg-yellow-200 border-4 border-black text-xl font-bold hover:translate-x-1 hover:translate-y-1 transition-transform shadow-brutal"
+            >
+              Home
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (!currentLyric) {
     return (
       <div className="min-h-screen bg-pink-50 flex items-center justify-center">
@@ -134,6 +188,12 @@ const Game = () => {
         <div className="flex justify-between items-center">
           <div className="text-xl border-2 border-black p-4 bg-white shadow-brutal">
             Score: {score}
+          </div>
+          <div className="flex-1 mx-4">
+            <div className="text-center mb-2 text-lg font-bold">
+              {timeLeft}s
+            </div>
+            <TimerBar timeLeft={timeLeft} maxTime={maxTime} />
           </div>
           <button
             onClick={() => setShowTitle(!showTitle)}
