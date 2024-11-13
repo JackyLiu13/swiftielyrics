@@ -5,7 +5,7 @@ import Game from './routes/Game';
 
 function App() {
   return (
-    <Router>
+    <Router basename="/swiftielyrics">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/play" element={<Game />} />
