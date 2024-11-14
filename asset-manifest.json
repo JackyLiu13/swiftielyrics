@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/swiftielyrics/static/css/main.12ee482e.css",
-    "main.js": "/swiftielyrics/static/js/main.34070eea.js",
+    "main.css": "/swiftielyrics/static/css/main.a4568920.css",
+    "main.js": "/swiftielyrics/static/js/main.969e082c.js",
     "static/media/ticketart.png": "/swiftielyrics/static/media/ticketart.0d4bdad271db080f2249.png",
     "index.html": "/swiftielyrics/index.html",
-    "main.12ee482e.css.map": "/swiftielyrics/static/css/main.12ee482e.css.map",
-    "main.34070eea.js.map": "/swiftielyrics/static/js/main.34070eea.js.map"
+    "main.a4568920.css.map": "/swiftielyrics/static/css/main.a4568920.css.map",
+    "main.969e082c.js.map": "/swiftielyrics/static/js/main.969e082c.js.map"
   },
   "entrypoints": [
-    "static/css/main.12ee482e.css",
-    "static/js/main.34070eea.js"
+    "static/css/main.a4568920.css",
+    "static/js/main.969e082c.js"
   ]
 }
