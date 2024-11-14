@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import lyrics from '../data/lyrics.json';
-import { saveScore } from '../utils/scores';
 import TimerBar from '../components/TimerBar';
 
 const Game = () => {
@@ -17,6 +16,8 @@ const Game = () => {
   const [hintLyrics, setHintLyrics] = useState([]);
   const [isCorrect, setIsCorrect] = useState(false);
   const [difficulty, setDifficulty] = useState('medium');
+  const [skippedCount, setSkippedCount] = useState(0);
+  const [skippedSongs, setSkippedSongs] = useState([]);
 
   // Timer effect
   useEffect(() => {
@@ -32,7 +33,6 @@ const Game = () => {
 
   const endGame = () => {
     setGameOver(true);
-    saveScore({ score, date: new Date().toISOString() });
   };
 
   useEffect(() => {
@@ -143,16 +143,50 @@ const Game = () => {
     }
   };
 
+  const handleSkip = () => {
+    setSkippedSongs(prev => [...prev, {
+      title: currentLyric.title,
+      album: currentLyric.album,
+      prompt: currentLyric.prompt,
+      answer: currentLyric.answer
+    }]);
+    setSkippedCount(prev => prev + 1);
+    newRound();
+  };
+
   if (gameOver) {
     return (
       <div className="min-h-screen bg-pink-50 flex items-center justify-center p-4">
-        <div className="bg-white border-4 border-black shadow-brutal p-8 max-w-md w-full space-y-6 text-center">
-          <h2 className="text-4xl font-bold text-gray-800 border-b-4 border-black pb-4">
+        <div className="bg-white border-4 border-black shadow-brutal p-8 max-w-md w-full space-y-6">
+          <h2 className="text-4xl font-bold text-gray-800 border-b-4 border-black pb-4 text-center">
             Game Over!
           </h2>
-          <div className="text-6xl font-bold text-pink-500 my-8">
+          <div className="text-6xl font-bold text-pink-500 my-8 text-center">
             {score}
           </div>
+          
+          {skippedSongs.length > 0 && (
+            <div className="mb-8">
+              <h3 className="text-xl font-bold mb-4 border-b-2 border-black pb-2">
+                Skipped Songs ({skippedCount})
+              </h3>
+              <div className="space-y-4 max-h-60 overflow-y-auto">
+                {skippedSongs.map((song, index) => (
+                  <div key={index} className="p-4 bg-gray-50 border-2 border-black shadow-brutal">
+                    <div className="font-bold">{song.title}</div>
+                    <div className="text-sm text-gray-600">Album: {song.album}</div>
+                    <div className="mt-2 text-sm">
+                      <div className="font-medium">Prompt:</div>
+                      <div className="italic">{song.prompt}</div>
+                      <div className="font-medium mt-1">Answer:</div>
+                      <div className="italic">{song.answer}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="space-y-4">
             <button
               onClick={() => window.location.reload()}
@@ -185,6 +219,13 @@ const Game = () => {
   return (
     <div className="min-h-screen bg-pink-50 p-8">
       <div className="max-w-3xl mx-auto space-y-6">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-800 border-4 border-black p-4 bg-white shadow-brutal inline-block w-2/3" 
+              style={{ fontFamily: "'Bodoni MT', serif" }}>
+            Swifties Lyrics
+          </h1>
+        </div>
+
         <div className="flex justify-between items-center">
           <div className="text-xl border-2 border-black p-4 bg-white shadow-brutal">
             Score: {score}
@@ -224,12 +265,20 @@ const Game = () => {
             className="w-full p-4 border-4 border-black text-lg shadow-brutal"
             placeholder="Type the next line..."
           />
-          <button
-            onClick={() => checkAnswer(userGuess)}
-            className="w-full py-4 bg-pink-400 border-4 border-black text-xl font-bold hover:translate-x-1 hover:translate-y-1 transition-transform shadow-brutal"
-          >
-            Submit Guess
-          </button>
+          <div className="flex gap-4">
+            <button
+              onClick={() => checkAnswer(userGuess)}
+              className="w-3/4 py-4 bg-pink-400 border-4 border-black text-xl font-bold hover:translate-x-1 hover:translate-y-1 transition-transform shadow-brutal"
+            >
+              Submit Guess
+            </button>
+            <button
+              onClick={handleSkip}
+              className="w-1/4 py-4 bg-gray-300 border-4 border-black text-xl font-bold hover:translate-x-1 hover:translate-y-1 transition-transform shadow-brutal"
+            >
+              Skip
+            </button>
+          </div>
         </div>
 
         {isCorrect && (
